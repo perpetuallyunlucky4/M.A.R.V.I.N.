@@ -1,0 +1,80 @@
+from llama_cpp import Llama
+import time
+import os
+import json
+import re
+
+model_path="/home/pi/llama.cpp/models/codellama-7b-instruct.Q4_K_M.gguf"
+
+max_history = 10
+
+llm = Llama(model_path,
+            n_threads=4,
+            chat_format="llama-2",
+            verbose=False,
+            n_ctx=4096
+        )
+
+history_path = "history.json"
+
+if os.path.exists(history_path):
+    with open(history_path, "r") as file:
+        chat_history = json.load(file)
+else:
+    print("no chat history!")
+
+def process_response(response):
+    pattern = r"\[WRITE_CODE\](.*?)\[/WRITE_CODE\]"
+    code_blocks = re.findall(pattern, response, re.DOTALL)
+    if len(code_blocks) >= 1:
+        print("detected code blocks!")
+        return code_blocks, True    
+    else: return [], False
+
+while True:
+    user_input = input("niko: ")
+    chat_history.append({
+        "role" : "user",
+        "content" : user_input,
+    })
+    
+    if len(chat_history) > 2 * max_history + 1:
+        chat_history = [chat_history[0]] + chat_history[-(2 * max_history):]
+
+    
+    print("marvin: ", end="", flush=True)
+    stream = llm.create_chat_completion(messages=chat_history,
+                                        stream=True,
+                                        max_tokens=300,
+                                        temperature=0.3,
+                                        top_p=0.7,
+                                        top_k=40
+                                    )
+    
+    marvin_reply = ""
+    for chunk in stream:
+        token = chunk["choices"][0]["delta"].get("content", "")
+        print(token, end="", flush=True)
+        marvin_reply += token
+        
+    print()
+    
+    code_blocks, code_check = process_response(marvin_reply)
+    if code_check:
+        for block in code_blocks:
+            print(block)
+    
+    chat_history.append({
+        "role" : "assistant",
+        "content" : marvin_reply.strip()
+    })
+    
+    with open(history_path, "w") as file:
+        json.dump(chat_history, file, indent=2)
+        
+
+
+        
+        
+        
+        
