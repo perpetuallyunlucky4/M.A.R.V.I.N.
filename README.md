@@ -1,1 +1,1 @@
-M.A.R.V.I.N. personal assistant using llama.cpp python interface. using model codellama-7b-instruct and llama-2 as the chat format.
+M.A.R.V.I.N. (Machine-Assisted Reasoning and Virtual Interface Navigator) personal assistant using llama.cpp python interface. using model codellama-7b-instruct and llama-2 as the chat format. model found here: https://huggingface.co/TheBloke/CodeLlama-7B-Instruct-GGUF/resolve/main/codellama-7b-instruct.Q4_K_M.gguf?download=true
