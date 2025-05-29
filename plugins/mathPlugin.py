@@ -1,6 +1,6 @@
 import math
 import re
-from plugin_base import Plugin
+from plugins.plugin_base import Plugin
 
 class mathPlugin(Plugin):
     def can_handle(self, message: str) -> bool:
@@ -32,5 +32,3 @@ class mathPlugin(Plugin):
         return results
 
 
-af = mathPlugin()
-print(af.handle("[MATH] 3 * pi**2 [/MATH]  and [MATH]hello[/MATH]"))
