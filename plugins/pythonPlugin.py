@@ -1,12 +1,12 @@
 import re
 import subprocess
-from plugin_base import Plugin
+from plugins.plugin_base import Plugin
 
 class pythonPlugin(Plugin):
     def can_handle(self, message: str) -> str:
         return "[WRITE_PY]" in message and "[/WRITE_PY]" in message
     
-    def handle(self, message: str, gen_code_path: str) -> list[str]:
+    def handle(self, message: str, gen_code_path="/home/pi/marvin/marvin_code.py") -> list[str]:
         pattern = r"\[WRITE_PY\](.*?)\[/WRITE_PY\]"
         code_blocks = re.findall(pattern, message, re.DOTALL)
         result = []
@@ -42,6 +42,3 @@ class pythonPlugin(Plugin):
         return result
 
 
-py = pythonPlugin()
-
-print(py.handle("[WRITE_PY] \nprint('hello world!')\nprint('wassup')[/WRITE_PY] and [WRITE_PY] hi [/WRITE_PY]", "/home/pi/marvin/marvin_code.py"))
