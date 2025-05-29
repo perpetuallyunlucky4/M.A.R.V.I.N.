@@ -4,6 +4,9 @@ import os
 import json
 import re
 import subprocess
+from colorama import init, Fore, Style
+
+init(autoreset=True)
 
 model_path="/home/pi/llama.cpp/models/codellama-7b-instruct.Q4_K_M.gguf"
 
@@ -28,7 +31,7 @@ else:
 
 try:
     while True:
-        user_input = input("niko: ")
+        user_input = input(Fore.BLUE + "niko: " + Style.RESET_ALL)
         chat_history.append({
             "role" : "user",
             "content" : user_input,
@@ -38,7 +41,7 @@ try:
             chat_history = [chat_history[0]] + chat_history[-(2 * max_history):]
 
         
-        print("marvin: ", end="", flush=True)
+        print(Fore.GREEN + "marvin: " + Style.RESET_ALL, end="", flush=True)
         stream = llm.create_chat_completion(messages=chat_history,
                                             stream=True,
                                             max_tokens=300,
@@ -50,7 +53,7 @@ try:
         marvin_reply = ""
         for chunk in stream:
             token = chunk["choices"][0]["delta"].get("content", "")
-            print(token, end="", flush=True)
+            print(Fore.CYAN + token, end="", flush=True)
             marvin_reply += token
             
         print()
@@ -64,8 +67,8 @@ try:
             json.dump(chat_history, file, indent=2)
         
 except KeyboardInterrupt:
-    print("\nmarvin: goodbye, Sir")
-    print("system shutting down...")
+    print(Style.BRIGHT + Fore.RED + "\nmarvin: goodbye, Sir" + Style.RESET_ALL)
+    print(Style.BRIGHT + Fore.RED + "system shutting down..." + Style.RESET_ALL)
 
         
         
