@@ -7,6 +7,7 @@ class mathPlugin(Plugin):
         return "[MATH]" in message and "[/MATH]" in message
     
     def handle(self, message: str) -> list[str]:
+        message = message.replace("^", "**")
         pattern = r"\[MATH\](.*?)\[/MATH\]"
         calc_blocks = re.findall(pattern, message, re.DOTALL)
     
@@ -30,5 +31,4 @@ class mathPlugin(Plugin):
             except Exception as e:
                 results.append(f"{expr}: {e}")
         return results
-
 
