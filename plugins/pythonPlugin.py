@@ -13,8 +13,8 @@ class pythonPlugin(Plugin):
 
         for i, block in enumerate(code_blocks):
             block = block.strip()
-            print(f"code block number {i + 1}: \n{block}\n")
-            confirm = input("do you want to run the code? (Y/n):").strip().lower()
+            print(f"\033[38;2;255;60;60mcode block number {i + 1}: \n{block}\n\033[0m")
+            confirm = input("\033[38;2;255;60;60mdo you want to run the code? (Y/n):\033[0m").strip().lower()
                 
             if confirm != "y":
                 continue
@@ -22,7 +22,7 @@ class pythonPlugin(Plugin):
             with open(gen_code_path, "w") as file:
                 file.write(block)
                 
-            print(f"running {gen_code_path}...\n")
+            print(f"\033[38;2;255;60;60mrunning {gen_code_path}...\n\033[0m")
                 
             try:
                 output = subprocess.run(
@@ -40,5 +40,4 @@ class pythonPlugin(Plugin):
                 result.append(f"execution failed[{i}]:\n{e}")
     
         return result
-
 
