@@ -1,14 +1,19 @@
 from llama_cpp import Llama
 import time
-import os
+import os, sys
 import json
 import re
 import subprocess
-from colorama import init, Fore, Style
+from plugin_manager import pluginManager
 
-init(autoreset=True)
+sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 
-model_path="/home/pi/llama.cpp/models/codellama-7b-instruct.Q4_K_M.gguf"
+pm = pluginManager()
+pm.load_plugins()
+print(pm.plugins)
+
+#model_path="/home/pi/llama.cpp/models/codellama-7b-instruct.Q4_K_M.gguf"
+model_path = "/home/pi/Downloads/Nous-Hermes-2-Mistral-7B-DPO.Q4_K_M.gguf"
 
 gen_code_path = "marvin_code.py"
 
@@ -16,7 +21,7 @@ max_history = 10
 
 llm = Llama(model_path,
             n_threads=4,
-            chat_format="llama-2",
+            chat_format="chatml",
             verbose=False,
             n_ctx=2048
         )
@@ -31,7 +36,7 @@ else:
 
 try:
     while True:
-        user_input = input(Fore.BLUE + "niko: " + Style.RESET_ALL)
+        user_input = input("\033[38;2;0;255;255mniko: \033[0m")
         chat_history.append({
             "role" : "user",
             "content" : user_input,
@@ -41,10 +46,11 @@ try:
             chat_history = [chat_history[0]] + chat_history[-(2 * max_history):]
 
         
-        print(Fore.GREEN + "marvin: " + Style.RESET_ALL, end="", flush=True)
+        print("\033[38;2;255;20;147mmarvin: \033[0m", end="", flush=True)
+        
         stream = llm.create_chat_completion(messages=chat_history,
                                             stream=True,
-                                            max_tokens=300,
+                                            max_tokens=1000,
                                             temperature=0.3,
                                             top_p=0.7,
                                             top_k=40
@@ -53,7 +59,7 @@ try:
         marvin_reply = ""
         for chunk in stream:
             token = chunk["choices"][0]["delta"].get("content", "")
-            print(Fore.CYAN + token, end="", flush=True)
+            print(f"\033[38;2;255;182;193m{token}\033[0m", end="", flush=True)
             marvin_reply += token
             
         print()
@@ -63,12 +69,44 @@ try:
             "content" : marvin_reply.strip()
         })
         
+        plugin_responses = pm.run_plugins(marvin_reply)
+        if plugin_responses != []:
+            for response in plugin_responses:
+                print(f"\033[38;2;255;60;60msystem: {response}\n\033[0m")
+                chat_history.append({
+                    "role" : "system",
+                    "content" : "The following is a verified result from a trusted plugin. Do not redo the calculation or re-call the plugin. Just explain it to the user clearly:\n" + response
+                })
+                
+                print("\033[38;2;255;20;147mmarvin: \033[0m", end="", flush=True)
+        
+                stream = llm.create_chat_completion(messages=chat_history,
+                                                    stream=True,
+                                                    max_tokens=1000,
+                                                    temperature=0.3,
+                                                    top_p=0.7,
+                                                    top_k=40
+                                                )
+        
+                marvin_reply = ""
+                for chunk in stream:
+                    token = chunk["choices"][0]["delta"].get("content", "")
+                    print(f"\033[38;2;255;182;193m{token}\033[0m", end="", flush=True)
+                    marvin_reply += token
+            
+                print()
+      
+                chat_history.append({
+                    "role" : "assistant",
+                    "content" : marvin_reply.strip()
+                })
+        
         with open(history_path, "w") as file:
             json.dump(chat_history, file, indent=2)
         
 except KeyboardInterrupt:
-    print(Style.BRIGHT + Fore.RED + "\nmarvin: goodbye, Sir" + Style.RESET_ALL)
-    print(Style.BRIGHT + Fore.RED + "system shutting down..." + Style.RESET_ALL)
+    print("\033[38;2;255;60;60m\nmarvin: goodbye, Sir\033[0m")
+    print("\033[38;2;255;60;60m\nsystem shutting down...\033[0m")
 
         
         
