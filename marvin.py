@@ -75,7 +75,11 @@ try:
                 print(f"\033[38;2;255;60;60msystem: {response}\n\033[0m")
                 chat_history.append({
                     "role" : "system",
-                    "content" : "The following is a verified result from a trusted plugin. Do not redo the calculation or re-call the plugin. Just explain it to the user clearly:\n" + response
+                    "content" : response.strip()
+                })
+                chat_history.append({
+                    "role" : "user",
+                    "content" : f"marvin, the plugin returned this:{response.strip()}\n. Please summarize it within a few sentences"
                 })
                 
                 print("\033[38;2;255;20;147mmarvin: \033[0m", end="", flush=True)
