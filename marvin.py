@@ -5,8 +5,12 @@ import json
 import re
 import subprocess
 from plugin_manager import pluginManager
+from datetime import datetime
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
+
+time_update_interval = 5
+message_counter = 0
 
 pm = pluginManager()
 pm.load_plugins()
@@ -42,8 +46,19 @@ try:
             "content" : user_input,
         })
         
+        message_counter += 1
+        
         if len(chat_history) > 2 * max_history + 1:
             chat_history = [chat_history[0]] + chat_history[-(2 * max_history):]
+            
+        if message_counter >= time_update_interval:
+            current_time = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+            print(f"\033[38;2;255;60;60m\nThe current time is {current_time}\033[0m")
+            chat_history.append({
+                    "role" : "system",
+                    "content" : f"The current time is {current_time}"
+                })
+            message_counter = 0
 
         
         print("\033[38;2;255;20;147mmarvin: \033[0m", end="", flush=True)
@@ -79,7 +94,7 @@ try:
                 })
                 chat_history.append({
                     "role" : "user",
-                    "content" : f"marvin, the plugin returned this:{response.strip()}\n. Please summarize it within a few sentences"
+                    "content" : f"marvin, the plugin returned this:{response.strip()}\n. Please summarize it within a few sentences, taking into account what the user previously asked."
                 })
                 
                 print("\033[38;2;255;20;147mmarvin: \033[0m", end="", flush=True)
