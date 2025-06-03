@@ -3,6 +3,7 @@ from plugins.plugin_base import Plugin
 import re
 import json
 import os
+from datetime import datetime
 
 class weatherPlugin(Plugin):   
     def coords_from_loc(self, loc):
@@ -98,14 +99,15 @@ class weatherPlugin(Plugin):
             
             weather_overall = weather_code_map.get(values.get('weatherCode', '0'), 'unknown')
             summary = (
-                f"the current weather in {block}(lat: {lat}, long: {long}) is:\n{weather_overall}"
-                f"temperature: {values['temperature']}"
-                f"apparentTemperature: {values['temperatureApparent']}"
-                f"humidity: {values.get('humidity', 'NA')}"
-                f"cloudCover: {values.get('cloudCover', 'NA')}"
-                f"wind direction: {values.get('windDirection', 0)}"
-                f"wind speed: {values.get('windSpeed', 0)}"
-                f"rain intensity: {values.get('rainIntensity', 'NA')}"
+                f"the current time is {str(datetime.now())}"
+                f"the current weather in {block}(lat: {lat}, long: {long}) is:\n{weather_overall}\n"
+                f"temperature: {values['temperature']} degrees Celcius\n"
+                f"apparentTemperature: {values['temperatureApparent']} degrees Celcius\n"
+                f"humidity: {values.get('humidity', 'NA')}%\n"
+                f"cloudCover: {values.get('cloudCover', 'NA')}%\n"
+                f"wind direction: {values.get('windDirection', 0)} degrees clockwise from north\n"
+                f"wind speed: {values.get('windSpeed', 0)} metres/s\n"
+                f"rain intensity: {values.get('rainIntensity', 'NA')} mm/hr\n"
             )
             
             results.append(summary)
