@@ -98,8 +98,9 @@ class weatherPlugin(Plugin):
             
             
             weather_overall = weather_code_map.get(values.get('weatherCode', '0'), 'unknown')
+            current_datetime = datetime.now().strftime('%m/%d/%Y, %H:%M:%S)
             summary = (
-                f"the current time is {datetime.now().strftime('%m/%d/%Y, %H:%M:%S}"
+                f"the current time is {current_datetime}"
                 f"the current weather in {block}(lat: {lat}, long: {long}) is:\n{weather_overall}\n"
                 f"temperature: {values['temperature']} degrees Celcius\n"
                 f"apparentTemperature: {values['temperatureApparent']} degrees Celcius\n"
