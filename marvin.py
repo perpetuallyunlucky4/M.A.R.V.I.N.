@@ -4,7 +4,7 @@ import os, sys
 import json
 import re
 import subprocess
-from plugin_manager import pluginManager
+from pluginManager import pluginManager
 from datetime import datetime
 
 sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
