@@ -1,6 +1,6 @@
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
-from runner import test_tokens as generate_reply_stream
+from runner import generate_chat_completion
 import uvicorn
 from threading import Thread
 import asyncio
@@ -40,7 +40,7 @@ async def stream_async(user_input):
     
     def worker():
         # In this worker thread, schedule putting tokens into the main loop's queue
-        for token in generate_reply_stream(user_input):
+        for token in generate_chat_completion(user_input):
             asyncio.run_coroutine_threadsafe(queue.put(token), loop)
         asyncio.run_coroutine_threadsafe(queue.put(None), loop)  # signal end
 
@@ -53,6 +53,6 @@ async def stream_async(user_input):
         yield token
         
 if __name__ == "__main__":
-    print("starting up...")
+    print("starting up....")
     uvicorn.run("main:app", host="0.0.0.0", port=8000)
 
