@@ -79,7 +79,7 @@ button:hover {
 }
 
     ::selection {
-      background: #0ff;
+      background: #4cbed8;
       color: #000;
     }
 
@@ -175,7 +175,7 @@ button:hover {
 				if (!lastMarvin) {
 					lastMarvin = document.createElement("div");
 					lastMarvin.className = "message marvin";
-					lastMarvin.innerHTML = `<strong>M.A.R.V.I.N:</strong>`;
+					lastMarvin.innerHTML = `<strong>M.A.R.V.I.N: </strong>`;
 					chat.appendChild(lastMarvin);
 				}
 				token.split('\n').forEach((line, index, arr) => {
@@ -188,6 +188,8 @@ button:hover {
 				});
 			} else if (msg === "__END__") {
 				lastMarvin = null;
+			} else { 
+				appendMessage("hi", msg);
 			}
 			
 			chat.scrollTop = chat.scrollHeight;
