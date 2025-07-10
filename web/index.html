@@ -178,7 +178,14 @@ button:hover {
 					lastMarvin.innerHTML = `<strong>M.A.R.V.I.N:</strong>`;
 					chat.appendChild(lastMarvin);
 				}
-				lastMarvin.appendChild(document.createTextNode(token));
+				token.split('\n').forEach((line, index, arr) => {
+					if (line) {
+						lastMarvin.appendChild(document.createTextNode(line));
+					}
+					if (index < arr.length - 1) {
+						lastMarvin.appendChild(document.createElement("br"));
+					}
+				});
 			} else if (msg === "__END__") {
 				lastMarvin = null;
 			}
