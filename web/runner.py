@@ -13,7 +13,7 @@ sys.path.insert(0, os.path.abspath(os.path.dirname(__file__)))
 #model_path="/home/pi/llama.cpp/models/codellama-7b-instruct.Q4_K_M.gguf"
 model_path = "/home/pi/llama.cpp/models/Nous-Hermes-2-Mistral-7B-DPO.Q4_K_M.gguf"
 
-max_history = 15
+max_history = 10
 
 llm = Llama(model_path,
             n_threads=4,
@@ -72,7 +72,9 @@ def generate_chat_completion(message):
                 "content": f"marvin, the plugin returned this: {response.strip()}\n. Please summarize it within a few sentences, taking into account what the I previously asked for."
             })
             
-            print(plugin_responses)
+            for token in response.split():
+                time.sleep(0.5)
+                yield token
             
             summary_stream = llm.create_chat_completion(messages=chat_history,
                                         stream=True,
@@ -99,7 +101,7 @@ def generate_chat_completion(message):
 
 
 def test_tokens(dummy):
-    reply = "This is a test of the WEB UI's token streaming capabilities [WRITE_PY]print('hhi')[/WRITE_PY]"
+    reply = "This is a test of the WEB UI's token streaming capabilities [WRITE_PY]print('hhi')[/WRITE_PY] [TIME] [WEATHER] singapore [/WEATHER]"
     for token in reply.split():
         time.sleep(0.5) 
         yield f"__APPEND__{token} "
@@ -107,11 +109,9 @@ def test_tokens(dummy):
     plugin_responses = pm.run_plugins(reply)
     if plugin_responses:
         for response in plugin_responses:
-            yield "__END__"
-            for token in response.split():
-                time.sleep(0.5)
-                yield f"__APPEND__{token}"
-            yield "__END__"
+            yield response
+            
+    yield "test system thingy"
             
 
         
