@@ -128,7 +128,7 @@ button:hover {
 	</form>
 	
 	<script>
-		const socket = new WebSocket("ws://localhost:8000/chat");
+		const socket = new WebSocket("ws://192.168.50.79:8000/chat");
 		
 		const chat = document.getElementById("chat");
 		const form = document.getElementById("form");
@@ -136,7 +136,7 @@ button:hover {
 		
 		let lastMarvin = null;
 		
-		fetch("http://localhost:8000/history")
+		fetch("http://192.168.50.79:8000/history")
 			.then(res => res.json())
 			.then(history => {
 				for (const msg of history) {
