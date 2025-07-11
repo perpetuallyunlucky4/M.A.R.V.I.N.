@@ -1,11 +1,14 @@
 from fastapi import FastAPI, WebSocket
 from fastapi.middleware.cors import CORSMiddleware
 from runner import generate_chat_completion
+from runner import get_history
 import uvicorn
 from threading import Thread
 import asyncio
 import json
 from fastapi.responses import JSONResponse
+
+test = True
 
 app = FastAPI()
 
@@ -20,8 +23,7 @@ app.add_middleware(
 @app.get("/history")
 async def get_hist():
     try:
-        with open("history.json", "r") as f:
-            history = json.load(f)
+        history = get_history()
         return JSONResponse(content=history)
     except FileNotFoundError:
         return JSONResponse(content=[])
