@@ -26,7 +26,7 @@ llm = Llama(model_path,
             n_ctx=2048
         )
 
-history_path = "testhist.json"
+history_path = "history.json"
 
 if os.path.exists(history_path):
     with open(history_path, "r") as file:
